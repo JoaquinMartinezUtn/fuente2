@@ -1,7 +1,9 @@
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
-RUN mvn -q -DskipTests clean package
+RUN mvn -q -DskipTests -U dependency:get -Dartifact=com.github.ezequieljsosa:dds-eval-tp2025:0.0.7 -DrepoUrl=https://jitpack.io
+RUN mvn -q -DskipTests -U -Dmaven.wagon.http.retryHandler.count=5 clean package
+
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
