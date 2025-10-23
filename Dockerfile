@@ -1,8 +1,11 @@
-FROM maven:3.8.6-openjdk-18 AS build
+FROM maven:3.9.9-eclipse-temurin-17 AS build
+WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn -q -DskipTests clean package
 
-FROM openjdk:17-jdk-slim
-COPY --from=build /target/my-app-name-1.0-SNAPSHOT.jar app.jar
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/my-app-name-1.0-SNAPSHOT.jar app.jar
+ENV JAVA_TOOL_OPTIONS="-XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=75.0"
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
